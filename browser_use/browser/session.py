@@ -1,5 +1,3 @@
-CDPClient"""Event-driven browser session with backwards compatibility."""
-
 import asyncio
 import logging
 from functools import cached_property
