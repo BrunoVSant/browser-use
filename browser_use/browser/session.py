@@ -1,5 +1,3 @@
-"""Event-driven browser session with backwards compatibility."""
-
 import asyncio
 import logging
 from functools import cached_property
@@ -1428,10 +1426,13 @@ class BrowserSession(BaseModel):
 		self.logger.debug(f'🌎 Connecting to existing chromium-based browser via CDP: {self.cdp_url} -> ({browser_location})')
 
 		try:
+			ws_headers = getattr(self.browser_profile, "headers", None) or {}
 			# Create and store the CDP client for direct CDP communication
 			self._cdp_client_root = CDPClient(
-				self.cdp_url, max_ws_frame_size=200 * 1024 * 1024
-			)  # Use 200MB limit to handle pages with very large DOMs
+				self.cdp_url,
+				additional_headers=ws_headers,          # <- AQUI
+				max_ws_frame_size=200 * 1024 * 1024,   # 200MB
+			)
 			assert self._cdp_client_root is not None
 			await self._cdp_client_root.start()
 
